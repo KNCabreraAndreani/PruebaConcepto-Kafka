@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Api.KafkaConnector;
 using Api.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -33,8 +34,9 @@ namespace Api
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Api", Version = "v1" });
             });
+            services.AddSingleton<IKafkaContext<int, string>, KafkaContext>();
+            services.AddSingleton<IOrdenesService, OrdenesService>();
             services.AddHostedService<KafkaConsumerService>();
-            services.AddHostedService<KafkaProducerService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

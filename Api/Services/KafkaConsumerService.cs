@@ -21,15 +21,20 @@ namespace Api.Services
                 Seeds = "localhost:9092"
             }, new ConsoleLogger());
         }
-        public Task StartAsync(CancellationToken cancellationToken)
+        public async Task StartAsync(CancellationToken cancellationToken)
         {
-            _cluster.ConsumeFromLatest("demo");
-            _cluster.MessageReceived += record =>
-            {
-                _logger.LogInformation($"Received: {Encoding.UTF8.GetString(record.Value as byte[])}");
-            };
 
-            return Task.CompletedTask;
+            await Task.Run(() =>
+            {
+                _cluster.ConsumeFromLatest("demo");
+                _cluster.MessageReceived += record =>
+                {
+                    _logger.LogInformation($"Received: {Encoding.UTF8.GetString(record.Value as byte[])}");
+                };
+            }, cancellationToken);
+
+            await Task.CompletedTask;
+            return;
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
